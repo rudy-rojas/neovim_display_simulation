@@ -1,0 +1,217 @@
+/* NeoVim Simulator Plugin - Gruvbox Dark Theme Styles */
+
+.nvim-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+    padding: 8px 12px;
+    background: #1d2021;
+    border-radius: 6px;
+    border: 1px solid #504945;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+.nvim-controls label {
+    font-size: 11px;
+    font-weight: bold;
+    color: #fabd2f;
+    margin-right: 4px;
+}
+
+.nvim-controls select {
+    padding: 4px 8px;
+    border: 1px solid #665c54;
+    border-radius: 4px;
+    background: #282828;
+    color: #ebdbb2;
+    font-size: 12px;
+    font-family: inherit;
+    min-width: 80px;
+}
+
+.nvim-controls select:focus {
+    outline: none;
+    border-color: #fabd2f;
+    box-shadow: 0 0 0 1px #fabd2f;
+}
+
+.nvim-controls select option {
+    background: #282828;
+    color: #ebdbb2;
+}
+
+.nvim-controls button {
+    padding: 6px 16px;
+    background: #fe8019;
+    color: #1d2021;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: inherit;
+    transition: background-color 0.2s ease;
+}
+
+.nvim-controls button:hover {
+    background: #d65d0e;
+}
+
+.nvim-controls button:active {
+    background: #cc241d;
+}
+
+/* Dark mode compatibility */
+.nightMode .nvim-controls {
+    background: #1d2021;
+    border-color: #504945;
+}
+
+.nightMode .nvim-controls select {
+    background: #282828;
+    color: #ebdbb2;
+    border-color: #665c54;
+}
+
+/* Gruvbox Color Palette for future syntax highlighting */
+:root {
+    /* Gruvbox Dark Hard Palette */
+    --gruvbox-bg0-hard: #1d2021;
+    --gruvbox-bg0: #282828;
+    --gruvbox-bg1: #3c3836;
+    --gruvbox-bg2: #504945;
+    --gruvbox-bg3: #665c54;
+    --gruvbox-bg4: #7c6f64;
+    
+    --gruvbox-fg0: #fbf1c7;
+    --gruvbox-fg1: #ebdbb2;
+    --gruvbox-fg2: #d5c4a1;
+    --gruvbox-fg3: #bdae93;
+    --gruvbox-fg4: #a89984;
+    
+    --gruvbox-red: #fb4934;
+    --gruvbox-green: #b8bb26;
+    --gruvbox-yellow: #fabd2f;
+    --gruvbox-blue: #83a598;
+    --gruvbox-purple: #d3869b;
+    --gruvbox-aqua: #8ec07c;
+    --gruvbox-orange: #fe8019;
+    
+    --gruvbox-gray: #928374;
+    --gruvbox-red-dim: #cc241d;
+    --gruvbox-green-dim: #98971a;
+    --gruvbox-yellow-dim: #d79921;
+    --gruvbox-blue-dim: #458588;
+    --gruvbox-purple-dim: #b16286;
+    --gruvbox-aqua-dim: #689d6a;
+    --gruvbox-orange-dim: #d65d0e;
+}
+
+/* Syntax highlighting classes for NeoVim simulation */
+
+/* HTML/XML */
+.nvim-tag-bracket { color: var(--gruvbox-gray); }
+.nvim-tag-name { color: var(--gruvbox-red); }
+.nvim-attribute-name { color: var(--gruvbox-yellow); }
+.nvim-attribute-value { color: var(--gruvbox-green); }
+.nvim-equals { color: var(--gruvbox-fg1); }
+
+/* JavaScript/TypeScript/Node */
+.nvim-js-keyword { color: var(--gruvbox-red); }
+.nvim-js-function { color: var(--gruvbox-yellow); }
+.nvim-js-string { color: var(--gruvbox-green); }
+.nvim-js-number { color: var(--gruvbox-purple); }
+.nvim-js-boolean { color: var(--gruvbox-orange); }
+.nvim-js-operator { color: var(--gruvbox-aqua); }
+.nvim-js-variable { color: var(--gruvbox-blue); }
+.nvim-js-comment { color: var(--gruvbox-gray); font-style: italic; }
+.nvim-js-method { color: var(--gruvbox-yellow); }
+.nvim-js-property { color: var(--gruvbox-blue); }
+
+/* Java */
+.nvim-java-keyword { color: var(--gruvbox-red); }
+.nvim-java-type { color: var(--gruvbox-yellow); }
+.nvim-java-string { color: var(--gruvbox-green); }
+.nvim-java-annotation { color: var(--gruvbox-orange); }
+.nvim-java-modifier { color: var(--gruvbox-purple); }
+.nvim-java-method { color: var(--gruvbox-yellow); }
+
+/* Swift */
+.nvim-swift-keyword { color: var(--gruvbox-red); }
+.nvim-swift-type { color: var(--gruvbox-yellow); }
+.nvim-swift-string { color: var(--gruvbox-green); }
+.nvim-swift-attribute { color: var(--gruvbox-orange); }
+.nvim-swift-number { color: var(--gruvbox-purple); }
+
+/* Python */
+.nvim-py-keyword { color: var(--gruvbox-red); }
+.nvim-py-function { color: var(--gruvbox-yellow); }
+.nvim-py-string { color: var(--gruvbox-green); }
+.nvim-py-decorator { color: var(--gruvbox-orange); }
+.nvim-py-builtin { color: var(--gruvbox-blue); }
+.nvim-py-number { color: var(--gruvbox-purple); }
+
+/* CSS */
+.nvim-css-selector { color: var(--gruvbox-red); }
+.nvim-css-property { color: var(--gruvbox-blue); }
+.nvim-css-value { color: var(--gruvbox-green); }
+.nvim-css-unit { color: var(--gruvbox-purple); }
+.nvim-css-pseudo { color: var(--gruvbox-orange); }
+
+/* Cursor simulation styles */
+.nvim-cursor {
+    background: var(--gruvbox-fg0);
+    color: var(--gruvbox-bg0-hard);
+    animation: nvim-blink 1s infinite;
+    position: relative;
+}
+
+.nvim-cursor-insert {
+    position: relative;
+}
+
+.nvim-cursor-insert::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--gruvbox-fg0);
+    animation: nvim-blink 1s infinite;
+    z-index: 1;
+}
+
+@keyframes nvim-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+}
+
+/* Visual selection styles */
+.nvim-visual-selection {
+    background: rgba(131, 165, 152, 0.3);
+    position: relative;
+}
+
+/* Code line display */
+.nvim-code-line {
+    display: block;
+    white-space: pre;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    line-height: 1.5;
+}
+
+/* Editor preview container */
+.nvim-preview {
+    background: var(--gruvbox-bg0-hard);
+    color: var(--gruvbox-fg1);
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid var(--gruvbox-bg2);
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: auto;
+    margin-top: 8px;
+}
