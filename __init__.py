@@ -65,19 +65,21 @@ def generate_controls_html(field_name):
     # Field identifier for JavaScript functions
     field_id = field_name.lower().replace(" ", "")
     
+    # Generate HTML without inline event handlers (CSP compliant)
     controls_html = f"""
     <div class="nvim-controls" id="nvim-controls-{field_id}">
         <label>Language:</label>
-        <select id="nvim-lang-{field_id}" onchange="onLanguageChange{field_name.replace(' ', '')}(this)">
+        <select id="nvim-lang-{field_id}" data-field="{field_name}">
             {language_options}
         </select>
         
         <label>Mode:</label>
-        <select id="nvim-mode-{field_id}" onchange="onModeChange{field_name.replace(' ', '')}(this)">
+        <select id="nvim-mode-{field_id}" data-field="{field_name}">
             {mode_options}
         </select>
         
-        <button type="button" onclick="convert{field_name.replace(' ', '')}()">Convert</button>
+        <button type="button" id="nvim-convert-{field_id}" data-field="{field_name}">Convert</button>
+        <a href="https://rudy-rojas.github.io/nvim-view-simulator/">Open Editor</a>
     </div>
     """
     
@@ -101,9 +103,9 @@ def inject_nvim_controls(editor):
     css_content = load_file_content("nvim_styles.css")
     js_content = load_file_content("nvim_functions.js")
     
-    # Escape content for safe injection - fix template string escaping
-    css_content_escaped = css_content.replace('\\', '\\\\').replace('`', '\\`')
-    js_content_escaped = js_content.replace('\\', '\\\\').replace('`', '\\`')
+    # Escape content for safe injection
+    css_content_escaped = css_content.replace('\\', '\\\\').replace('`', '\\`').replace('${', '\\${')
+    js_content_escaped = js_content.replace('\\', '\\\\').replace('`', '\\`').replace('${', '\\${')
     
     editor.web.eval(f"""
         // Check if plugin is already loaded to avoid duplicates
@@ -132,7 +134,7 @@ def inject_nvim_controls(editor):
             console.log('NeoVim plugin styles and scripts loaded');
         }}
     """)
-    
+
     # Inject controls for CodeBefore and CodeAfter fields
     for field_name in ['CodeBefore', 'CodeAfter']:
         if field_name in field_names:
@@ -145,10 +147,13 @@ def inject_nvim_controls(editor):
             if field_ord is not None:
                 # Insert the controls in the correct position
                 controls_html = generate_controls_html(field_name)
-                controls_html_escaped = controls_html.replace('`', '\\`')
+                controls_html_escaped = controls_html.replace('`', '\\`').replace('${', '\\${')
+                field_id = field_name.lower().replace(' ', '')
                 
                 editor.web.eval(f"""
                     setTimeout(function() {{
+                        console.log('Injecting controls for {field_name}...');
+                        
                         // Find the label for this field
                         const labels = document.querySelectorAll('.label-name');
                         let targetLabel = null;
@@ -165,9 +170,12 @@ def inject_nvim_controls(editor):
                             const fieldContainer = targetLabel.closest('.field-container');
                             
                             if (fieldContainer) {{
-                                // Remove existing controls
-                                const existingControls = fieldContainer.querySelector('#nvim-controls-{field_name.lower()}');
-                                if (existingControls) existingControls.remove();
+                                // Remove existing controls to avoid duplicates
+                                const existingControls = fieldContainer.querySelector('#nvim-controls-{field_id}');
+                                if (existingControls) {{
+                                    console.log('Removing existing controls for {field_name}');
+                                    existingControls.remove();
+                                }}
                                 
                                 // Find the label-container
                                 const labelContainer = fieldContainer.querySelector('.label-container');
@@ -182,6 +190,21 @@ def inject_nvim_controls(editor):
                                     labelContainer.insertAdjacentElement('afterend', controlsElement);
                                     
                                     console.log('NeoVim controls inserted for {field_name}');
+                                    
+                                    // CRITICAL: Re-attach event listeners after injection
+                                    if (window.reattachListeners) {{
+                                        console.log('Re-attaching listeners for {field_name}...');
+                                        window.reattachListeners();
+                                    }} else {{
+                                        console.warn('reattachListeners function not available');
+                                        // Fallback: try to call attachEventListeners directly
+                                        setTimeout(() => {{
+                                            if (window.attachEventListeners) {{
+                                                console.log('Calling attachEventListeners as fallback...');
+                                                window.attachEventListeners();
+                                            }}
+                                        }}, 200);
+                                    }}
                                 }} else {{
                                     console.warn('Label container not found for {field_name}');
                                 }}
@@ -191,34 +214,43 @@ def inject_nvim_controls(editor):
                         }} else {{
                             console.warn('Label not found for {field_name}');
                         }}
-                    }}, 1000);
+                    }}, 1200); // Increased timeout for better reliability
                 """)
 
 def on_editor_did_init(editor):
     """Hook called when editor is initialized"""
     # Delay to ensure editor is fully loaded
-    mw.progress.timer(2000, lambda: inject_nvim_controls(editor), False)
+    mw.progress.timer(2500, lambda: inject_nvim_controls(editor), False)
 
 def on_editor_did_load_note(editor):
     """Hook called when a note is loaded in the editor"""
     # Delay to ensure all fields are rendered
-    mw.progress.timer(1500, lambda: inject_nvim_controls(editor), False)
+    mw.progress.timer(2000, lambda: inject_nvim_controls(editor), False)
 
 def on_editor_did_unfocus_field(editor, field, text):
     """Hook called when user unfocuses a field"""
-    # Reduce re-injection frequency to avoid console spam
-    # Only re-inject if controls are missing
+    # Check if controls exist and re-inject only if missing
     if hasattr(editor, 'note') and editor.note:
-        # Check if controls exist before re-injecting
         editor.web.eval("""
-            const codeBeforeControls = document.getElementById('nvim-controls-codebefore');
-            const codeAfterControls = document.getElementById('nvim-controls-codeafter');
-            if (!codeBeforeControls || !codeAfterControls) {
-                // Only re-inject if controls are missing
-                console.log('NeoVim controls missing, re-injecting...');
-            }
+            setTimeout(() => {
+                const codeBeforeControls = document.getElementById('nvim-controls-codebefore');
+                const codeAfterControls = document.getElementById('nvim-controls-codeafter');
+                
+                if (!codeBeforeControls || !codeAfterControls) {
+                    console.log('NeoVim controls missing, triggering re-injection...');
+                    // This will trigger the Python re-injection
+                    window.nvimControlsMissing = true;
+                } else {
+                    // Controls exist, just make sure listeners are attached
+                    if (window.reattachListeners) {
+                        window.reattachListeners();
+                    }
+                }
+            }, 300);
         """)
-        # Commented out to reduce spam: inject_nvim_controls(editor)
+        
+        # Re-inject if needed
+        mw.progress.timer(1000, lambda: inject_nvim_controls(editor), False)
 
 # Register hooks
 gui_hooks.editor_did_init.append(on_editor_did_init)
