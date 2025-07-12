@@ -68,6 +68,7 @@ def generate_controls_html(field_name):
     # Generate HTML without inline event handlers (CSP compliant)
     controls_html = f"""
     <div class="nvim-controls" id="nvim-controls-{field_id}">
+        <!-- 
         <label>Language:</label>
         <select id="nvim-lang-{field_id}" data-field="{field_name}">
             {language_options}
@@ -79,7 +80,8 @@ def generate_controls_html(field_name):
         </select>
         
         <button type="button" id="nvim-convert-{field_id}" data-field="{field_name}">Convert</button>
-        <a href="https://rudy-rojas.github.io/nvim-view-simulator/">Open Editor</a>
+        -->
+        <a href="https://rudy-rojas.github.io/vim-craft/">Open VimCraft Editor</a>
     </div>
     """
     

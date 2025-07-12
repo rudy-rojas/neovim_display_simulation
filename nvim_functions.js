@@ -1271,12 +1271,30 @@ const NeoVimCursorSimulator = {
   },
 
   /**
-   * Añade selección visual al texto
+   * Añade selección visual al texto con cursor al final
    */
   addVisualSelection(text, startPos, endPos) {
     if (!text || startPos < 0 || endPos <= startPos) return text;
 
     // Asegurar que los offsets están dentro del rango
+    const maxPos = text.length;
+    const safeStart = Math.max(0, Math.min(startPos, maxPos));
+    const safeEnd = Math.max(safeStart, Math.min(endPos, maxPos));
+
+    const beforeSelection = text.substring(0, safeStart);
+    const selection = text.substring(safeStart, safeEnd);
+    const afterSelection = text.substring(safeEnd);
+
+    return (
+      beforeSelection +
+      `<span class="nvim-visual-selection">${selection}</span>` +
+      `<span class="nvim-visual-cursor"></span>` +
+      afterSelection
+    );
+  },
+  addVisualSelectionOnly(text, startPos, endPos) {
+    if (!text || startPos < 0 || endPos <= startPos) return text;
+
     const maxPos = text.length;
     const safeStart = Math.max(0, Math.min(startPos, maxPos));
     const safeEnd = Math.max(safeStart, Math.min(endPos, maxPos));
